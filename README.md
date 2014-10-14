@@ -24,7 +24,7 @@ The API Key is kind hard to find in New Relic console. Here is how you find it..
 ### Usage Example
 
 ```ruby
-require 'newrelic_metrics'
+require 'newrelic-metrics'
 
 api_key = ENV['NEWRELIC_API_KEY']
 app_id  = ENV['NEWRELIC_APP_ID']
