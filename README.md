@@ -42,7 +42,7 @@ api = NewRelicMetrics::Client.new
 #
 # config = NewRelicMetrics::Configuration.new
 # config.api_key = api_key
-# api = NewRelicMetrics::Client.new(application: app_id)
+# api = NewRelicMetrics::Client.new(config)
 
 # Getting list of available metrics
 available_metrics = api.names(application: app_id)
