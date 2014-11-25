@@ -34,7 +34,7 @@ NewRelicMetrics.configure do |c|
   c.api_key = api_key
 end
 
-api = NewRelicMetrics::Client.new(config)
+api = NewRelicMetrics::Client.new
 
 # Alternativley you can use an instance configuration
 #
@@ -42,12 +42,8 @@ api = NewRelicMetrics::Client.new(config)
 # config.api_key = api_key
 # api = NewRelicMetrics::Client.new(application: app_id)
 
-# Use this notation instead if you want to get metrics for
-# servers instead of applications:
-# api = NewRelicMetrics.new(api_key, server: server_id)
-
 # Getting list of available metrics
-available_metrics = api.names
+available_metrics = api.names(application: app_id)
 
 last_24_hours_metrics = api.metrics(application: app_id, metrics: {'Apdex'=>['score']}, range: {from:'24 hours ago'})
 last_weeks_metrics    = api.metrics(application: app_id, metrics: {'Apdex'=>['score']}, range: {from:'2 weeks ago',to:'1 week ago'})
