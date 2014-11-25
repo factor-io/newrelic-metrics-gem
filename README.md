@@ -14,6 +14,8 @@ Using `bundle install` in your `Gemfile`:
 
     gem 'newrelic-metrics', '~> 0.0.3'
 
+# Pro account required
+This client uses a New Relic API which is blocked only for Pro accounts. You can get a free trial account from New Relic, but thereafter this will require a paid account.
 
 ## Authentication
 The API Key is kind hard to find in New Relic console. Here is how you find it...
