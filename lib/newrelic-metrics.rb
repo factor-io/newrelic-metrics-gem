@@ -33,42 +33,34 @@ module NewRelicMetrics
       raise ArgumentError, "No API Key is configured" unless @config && @config.api_key
     end
 
-    def names
-      get("metrics")
+    def names(application:nil, server:nil)
+      raise ArgumentError, "Need to define either an application or server id" unless application || server
+      raise ArgumentError, "Need to define either an application or server id, but not both" if application && server
+      resource = application ? 'applications' : 'servers'
+      resource_id = application || server
+      get(resource, resource_id, "metrics")
     end
 
-    def summarize(application:nil, server:nil, metrics:, range:{})
-
+    def metrics(application:nil, server:nil, metrics:, range:{}, summarize: false)
       if range && range!={}
-        throw ArgumentError, "Range must only contain a :to and :from time" if range.keys.length != 2
-        throw ArgumentError, "Range must contain a from time" if range.include?(:from)
-        throw ArgumentError, "Range must contain a to time" if range.include?(:to)
+        raise ArgumentError, "Range must only contain a :to and :from time" unless range.keys.all?{|k| k==:to || k==:from }
+        raise ArgumentError, "Range must contain a :from time" unless range.keys.include?(:from)
       end
 
       raise ArgumentError, "Need to define either an application or server id" unless application || server
       raise ArgumentError, "Need to define either an application or server id, but not both" if application && server
 
-      @resource = application ? 'applications' : 'servers'
-      @resource_id = application || server
+      resource = application ? 'applications' : 'servers'
+      resource_id = application || server
 
-      settings = {summarize:true}.merge(range)
-
-      metrics(metrics,settings)
-    end
-
-    def metrics(metrics={},options={})
-      query = ""
       conditions = []
 
-      names = metrics.keys
-      values = metrics.values.flatten
+      metrics.keys.each {|name| conditions << "names[]=#{URI.encode(name)}" }
+      metrics.values.flatten.each {|val| conditions << "values[]=#{URI.encode(val)}" }
 
-      names.each {|name| conditions << "names[]=#{URI.encode(name)}" }
-      values.each {|val| conditions << "values[]=#{URI.encode(val)}" }
-
-      if options[:from]
-        from_time = Chronic.parse(options[:from], context: :past)
-        to_time = Chronic.parse(options[:to]) if options[:to]
+      if range[:from]
+        from_time = Chronic.parse(range[:from], context: :past)
+        to_time = Chronic.parse(range[:to]) if range[:to]
         to_time ||= Time.now
         if from_time
           conditions << "from=#{from_time.getlocal('+00:00').iso8601}"
@@ -76,18 +68,20 @@ module NewRelicMetrics
         end
       end
 
-      conditions << "summarize=true" if options[:summarize]
+      conditions << "summarize=true" if summarize
 
       query = conditions.join('&')
-      get("metrics/data",query)
+      get(resource, resource_id, "metrics/data", query)
     end
 
     private
 
-    def get(path,query=nil)
+    def get(resource, resource_id, path, query=nil)
       uri = URI.parse('https://api.newrelic.com/')
-      uri.path = "/v2/#{@resource}/#{@resource_id}/#{path}.json"
+      uri.path = "/v2/#{resource}/#{resource_id}/#{path}.json"
       uri.query = query if query && query != ""
+
+      puts uri.to_s
 
       begin
         response = RestClient.get(uri.to_s,'X-Api-Key'=>@config.api_key)
