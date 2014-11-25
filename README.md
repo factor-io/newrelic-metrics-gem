@@ -45,10 +45,11 @@ api = NewRelicMetrics::Client.new
 # Getting list of available metrics
 available_metrics = api.names(application: app_id)
 
+# Getting metrics
+current_apdex         = api.metrics(application: app_id, metrics: {'Apdex'=>['score']})
 last_24_hours_metrics = api.metrics(application: app_id, metrics: {'Apdex'=>['score']}, range: {from:'24 hours ago'})
 last_weeks_metrics    = api.metrics(application: app_id, metrics: {'Apdex'=>['score']}, range: {from:'2 weeks ago',to:'1 week ago'})
 summary_metrics       = api.metrics(application: app_id, metrics: {'Apdex'=>['score']}, range: {from: 'yesterday', to: 'now'}, summarize:true)
-current_apdex         = api.metrics(application: app_id, metrics: {'Apdex'=>['score']})
 ```
 
 ## API Docs
