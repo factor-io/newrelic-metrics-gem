@@ -30,7 +30,17 @@ api_key = ENV['NEWRELIC_API_KEY']
 app_id  = ENV['NEWRELIC_APP_ID']
 
 # Initialize API
-api = NewRelicMetrics.new(api_key, application: app_id)
+NewRelicMetrics.configure do |c|
+  c.api_key = api_key
+end
+
+api = NewRelicMetrics::Client.new(config)
+
+# Alternativley you can use an instance configuration
+#
+# config = NewRelicMetrics::Configuration.new
+# config.api_key = api_key
+# api = NewRelicMetrics::Client.new(application: app_id)
 
 # Use this notation instead if you want to get metrics for
 # servers instead of applications:
@@ -41,13 +51,13 @@ available_metrics = api.names
 
 raw_metrics = api.metrics 'Apdex'=>['score']
 
-last_24_hours_metrics = api.metrics({'Apdex'=>['score']},{from:'24 hours ago'})
+last_24_hours_metrics = api.metrics(application: app_id, metrics: {'Apdex'=>['score']}, range: {from:'24 hours ago'})
 
-last_weeks_metrics = api.metrics({'Apdex'=>['score']},{from:'2 weeks ago',to:'1 week ago'})
+last_weeks_metrics = api.metrics(application: app_id, metrics:{'Apdex'=>['score']}, range: {from:'2 weeks ago',to:'1 week ago'})
 
-summary_metrics = api.summarize({'Apdex'=>['score']}, {from: 'yesterday', to: 'now'})
-# This call is equivalent to
-# summary_metrics = api.metrics({'Apdex'=>['score']}, {from: 'yesterday', to: 'now', summarize: true})
+summary_metrics = api.metrics(application: app_id, metrics: {'Apdex'=>['score']}, range: {from: 'yesterday', to: 'now'}, summarize:true)
+
+current_apdex = api.metrics(application: app_id, metrics: {'Apdex'=>['score']})
 
 ```
 
