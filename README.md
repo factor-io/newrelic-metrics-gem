@@ -1,5 +1,6 @@
 [![Code Climate](https://codeclimate.com/github/factor-io/newrelic-metrics-gem/badges/gpa.svg)](https://codeclimate.com/github/factor-io/newrelic-metrics-gem)
 [![Dependency Status](https://gemnasium.com/factor-io/newrelic-metrics-gem.svg)](https://gemnasium.com/factor-io/newrelic-metrics-gem)
+[![Build Status](https://travis-ci.org/factor-io/newrelic-metrics-gem.svg)](https://travis-ci.org/factor-io/newrelic-metrics-gem)
 [![Test Coverage](https://codeclimate.com/github/factor-io/newrelic-metrics-gem/badges/coverage.svg)](https://codeclimate.com/github/factor-io/newrelic-metrics-gem)
 
 New Relic Metrics
