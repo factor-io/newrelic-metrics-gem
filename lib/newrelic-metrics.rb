@@ -50,6 +50,14 @@ module NewRelicMetrics
       raise ArgumentError, "Need to define either an application or server id" unless application || server
       raise ArgumentError, "Need to define either an application or server id, but not both" if application && server
 
+      raise ArgumentError, "Metrics must be set" if !metrics || metrics=={}
+      raise ArgumentError, "Metrics must be an hash" unless metrics.is_a?(Hash)
+      raise ArgumentError, "Metric keys must be string" unless metrics.keys.all?{|k| k.is_a?(String)}
+      raise ArgumentError, "Metric values must be arrays" unless metrics.values.all?{|k| k.is_a?(Array)}
+      raise ArgumentError, "Metric values must be an array of strings" unless metrics.values.all?{|k| k.all?{|v| v.is_a?(String)} }
+
+
+
       resource = application ? 'applications' : 'servers'
       resource_id = application || server
 
