@@ -89,8 +89,6 @@ module NewRelicMetrics
       uri.path = "/v2/#{resource}/#{resource_id}/#{path}.json"
       uri.query = query if query && query != ""
 
-      puts uri.to_s
-
       begin
         response = RestClient.get(uri.to_s,'X-Api-Key'=>@config.api_key)
       rescue => ex
