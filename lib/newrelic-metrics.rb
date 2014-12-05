@@ -99,6 +99,13 @@ module NewRelicMetrics
           raise RequestFailed, ex.message
         end
       end
+      begin
+        content = JSON.parse(response)
+      rescue => ex
+        raise RequestFailed, ex.message
+      end
+
+      content
     end
   end
 end
