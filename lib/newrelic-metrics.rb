@@ -38,7 +38,7 @@ module NewRelicMetrics
       raise ArgumentError, "Need to define either an application or server id, but not both" if application && server
       resource = application ? 'applications' : 'servers'
       resource_id = application || server
-      get(resource, resource_id, "metrics")
+      get(resource, resource_id, "metrics")['metrics']
     end
 
     def metrics(application:nil, server:nil, metrics:, range:{}, summarize: false)
@@ -79,7 +79,7 @@ module NewRelicMetrics
       conditions << "summarize=true" if summarize
 
       query = conditions.join('&')
-      get(resource, resource_id, "metrics/data", query)
+      get(resource, resource_id, "metrics/data", query)['metric_data']
     end
 
     private
