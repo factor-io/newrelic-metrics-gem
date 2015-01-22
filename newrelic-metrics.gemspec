@@ -17,7 +17,7 @@ Gem::Specification.new do |s|
   s.add_runtime_dependency 'chronic', '~> 0.10.2'
   s.add_runtime_dependency 'json', '~> 1.8.1'
 
-  s.add_development_dependency 'codeclimate-test-reporter', '~> 0.3.0'
+  s.add_development_dependency 'codeclimate-test-reporter', '~> 0.4.5'
   s.add_development_dependency 'rspec', '~> 3.1.0'
-  s.add_development_dependency 'rake', '~> 10.3.2'
+  s.add_development_dependency 'rake', '~> 10.4.2'
 end
