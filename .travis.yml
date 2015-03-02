@@ -10,7 +10,7 @@ deploy:
   provider: rubygems
   gem: newrelic-metrics
   api_key:
-    secure: mMY5ZBtkbojnbXBLCnMpvdokLoJU+RbeafrQ3CZpOGXK4+mg8hoY79kdNIYNImF4bhOh3G0Ol0ByCsBGcciX1hknWLyrv8ZNNxlhoDLgTozcTIi8Zyd1SkRD360LUxGn5cDOgX+7o226zh6p2B742dVcgIf8Y469cGxT855DpBg=
+    secure: Znhxsd8s7qT3VjSogqDYczUrwbe/etE1BzUEVLVm0yi0o+h3A14C+ZGeTB1LZ2ZTlzVvR17LaVwbBbcT2OJT/9HMJ6W4t4LSy3agHJatGd7CWmcgcu+KJDEXyWOiCOqrMwwK/x8uTuk6lEeySFh9DqmBmY3UJSkX6/PA18Y3cPg=
   on:
     tags: true
     all_branches: true
