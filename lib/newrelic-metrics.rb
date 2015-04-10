@@ -53,13 +53,11 @@ module NewRelicMetrics
     private
 
     def generate_metrics_query(options={})
-      summarize   = options[:summarize] || false
-      metrics     = options[:metrics]
-      range       = options[:range] || {}
-      conditions  = []
+      range      = options[:range] || {}
+      conditions = []
 
-      metrics.keys.each {|name| conditions << "names[]=#{URI.encode(name)}" }
-      metrics.values.flatten.each {|val| conditions << "values[]=#{URI.encode(val)}" }
+      options[:metrics].keys.each {|name| conditions << "names[]=#{URI.encode(name)}" }
+      options[:metrics].values.flatten.each {|val| conditions << "values[]=#{URI.encode(val)}" }
 
       if range[:from]
         from_time = range[:from].is_a?(String) ? Chronic.parse(range[:from], context: :past) : range[:from]
@@ -71,7 +69,7 @@ module NewRelicMetrics
         end
       end
 
-      conditions << "summarize=true" if summarize
+      conditions << "summarize=true" if options[:summarize]
 
       conditions.join('&')
     end
