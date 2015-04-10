@@ -34,35 +34,30 @@ module NewRelicMetrics
     end
 
     def names(options={})
+      validate_resource_options(options)
       resource_id = options[:application] || options[:server]
       resource    = options[:application] ? 'applications' : 'servers'
-      raise ArgumentError.new("Need to define either an application or server id") unless resource_id
-      raise ArgumentError.new("Need to define either an application or server id, but not both") if options[:application] && options[:server]
       
       get(resource, resource_id, "metrics")['metrics']
     end
 
     def metrics(options={})
+      validate_metric_options(options)
       resource_id = options[:application] || options[:server]
       resource    = options[:application] ? 'applications' : 'servers'
+      query       = generate_metrics_query(options)
+
+      get(resource, resource_id, "metrics/data", query)['metric_data']
+    end
+
+    private
+
+    def generate_metrics_query(options={})
+      summarize   = options[:summarize] || false
       metrics     = options[:metrics]
       range       = options[:range] || {}
-      summarize   = options[:summarize] || false
       conditions  = []
 
-      raise ArgumentError.new("Need to define either an application or server id") unless resource_id
-      raise ArgumentError.new("Need to define either an application or server id, but not both") if options[:application] && options[:server]
-      raise ArgumentError.new("Metrics must be set") unless metrics
-      raise ArgumentError.new("Metrics must be an hash") unless metrics.is_a?(Hash)
-      raise ArgumentError.new("Metric keys must be string") unless metrics.keys.all?{|k| k.is_a?(String)}
-      raise ArgumentError.new("Metric values must be arrays") unless metrics.values.all?{|k| k.is_a?(Array)}
-      raise ArgumentError.new("Metric values must be an array of strings") unless metrics.values.all?{|k| k.all?{|v| v.is_a?(String)} }
-
-      if range && range!={}
-        raise ArgumentError.new("Range must only contain a :to and :from time") unless range.keys.all?{|k| k==:to || k==:from }
-        raise ArgumentError.new("Range must contain a :from time") unless range.keys.include?(:from)
-      end
-  
       metrics.keys.each {|name| conditions << "names[]=#{URI.encode(name)}" }
       metrics.values.flatten.each {|val| conditions << "values[]=#{URI.encode(val)}" }
 
@@ -78,19 +73,33 @@ module NewRelicMetrics
 
       conditions << "summarize=true" if summarize
 
-      query = conditions.join('&')
-      get(resource, resource_id, "metrics/data", query)['metric_data']
+      conditions.join('&')
     end
 
-    private
+    def validate_resource_options(options = {})
+      raise ArgumentError.new("Need to define either an application or server id") unless options[:application] || options[:server]
+      raise ArgumentError.new("Need to define either an application or server id, but not both") if options[:application] && options[:server]
+    end
+
+    def validate_metric_options(options={})
+      validate_resource_options(options)
+      raise ArgumentError.new("Metrics must be set") unless options[:metrics]
+      raise ArgumentError.new("Metrics must be an hash") unless options[:metrics].is_a?(Hash)
+      raise ArgumentError.new("Metric keys must be string") unless options[:metrics].keys.all?{|k| k.is_a?(String)}
+      raise ArgumentError.new("Metric values must be arrays") unless options[:metrics].values.all?{|k| k.is_a?(Array)}
+      raise ArgumentError.new("Metric values must be an array of strings") unless options[:metrics].values.all?{|k| k.all?{|v| v.is_a?(String)} }
+
+      if options[:range] && options[:range]!={}
+        raise ArgumentError.new("Range must only contain a :to and :from time") unless options[:range].keys.all?{|k| k==:to || k==:from }
+        raise ArgumentError.new("Range must contain a :from time") unless options[:range].keys.include?(:from)
+      end
+    end
 
     def get(resource, resource_id, path, query=nil)
-      uri       = URI.parse('https://api.newrelic.com/')
-      uri.path  = "/v2/#{resource}/#{resource_id}/#{path}.json"
-      uri.query = query if query && query != ""
+      uri = gen_uri(resource,resource_id,path,query)
 
       begin
-        response = RestClient.get(uri.to_s,'X-Api-Key'=>@config.api_key)
+        response = RestClient.get(uri,'X-Api-Key'=>@config.api_key)
       rescue => ex
         message = ex.response ? JSON.parse(ex.response).values.first['title'] : ex.message
         raise RequestFailed, message
@@ -103,6 +112,13 @@ module NewRelicMetrics
       end
 
       content
+    end
+
+    def gen_uri(resource,resource_id,path,query)
+      uri       = URI.parse('https://api.newrelic.com/')
+      uri.path  = "/v2/#{resource}/#{resource_id}/#{path}.json"
+      uri.query = query if query && query != ""
+      uri.to_s
     end
   end
 end
