@@ -13,7 +13,7 @@ Gem::Specification.new do |s|
   
   s.require_paths = ['lib']
 
-  s.add_runtime_dependency 'rest-client', '~> 1.7.3'
+  s.add_runtime_dependency 'rest-client', '~> 1.8.0'
   s.add_runtime_dependency 'chronic', '~> 0.10.2'
   s.add_runtime_dependency 'json', '~> 1.8.2'
 
