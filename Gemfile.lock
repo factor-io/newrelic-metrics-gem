@@ -1,10 +1,10 @@
 PATH
   remote: .
   specs:
-    newrelic-metrics (0.1.1)
-      chronic (~> 0.10.2)
-      json (~> 1.8.2)
-      rest-client (~> 1.8.0)
+    newrelic-metrics (0.1.10)
+      chronic (~> 0.10, >= 0.10.2)
+      json (~> 1.8, >= 1.8.2)
+      rest-client (~> 1.8, >= 1.8.0)
 
 GEM
   remote: https://rubygems.org/
@@ -53,7 +53,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  codeclimate-test-reporter (~> 0.4.7)
+  codeclimate-test-reporter (~> 0.4, >= 0.4.7)
   newrelic-metrics!
-  rake (~> 10.4.2)
-  rspec (~> 3.2.0)
+  rake (~> 10.4, >= 10.4.2)
+  rspec (~> 3.2, >= 3.2.0)
