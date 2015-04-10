@@ -75,8 +75,8 @@ module NewRelicMetrics
       metrics.values.flatten.each {|val| conditions << "values[]=#{URI.encode(val)}" }
 
       if range[:from]
-        from_time = Chronic.parse(range[:from], context: :past)
-        to_time = Chronic.parse(range[:to]) if range[:to]
+        from_time = range[:from].is_a?(String) ? Chronic.parse(range[:from], context: :past) : range[:from]
+        to_time = range[:to].is_a?(String) ? Chronic.parse(range[:to]) : range[:to] if range[:to]
         to_time ||= Time.now
         if from_time
           conditions << "from=#{from_time.getlocal('+00:00').iso8601}"

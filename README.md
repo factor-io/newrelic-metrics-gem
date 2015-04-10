@@ -57,6 +57,11 @@ current_apdex         = api.metrics(application: app_id, metrics: {'Apdex'=>['sc
 last_24_hours_metrics = api.metrics(application: app_id, metrics: {'Apdex'=>['score']}, range: {from:'24 hours ago'})
 last_weeks_metrics    = api.metrics(application: app_id, metrics: {'Apdex'=>['score']}, range: {from:'2 weeks ago',to:'1 week ago'})
 summary_metrics       = api.metrics(application: app_id, metrics: {'Apdex'=>['score']}, range: {from: 'yesterday', to: 'now'}, summarize:true)
+
+# Getting consistent metrics across multiple calls
+from = Chronic.parse('5 minutes ago')
+last_24_hours_apdex = api.metrics(application: app_id, metrics: {'Apdex'=>['score']}, range: {from: from})
+last_24_hours_errors = api.metrics(application: app_id, metrics: {'Errors/all'=>['error_count']}, range: {from: from})
 ```
 
 ## API Docs
@@ -72,6 +77,6 @@ This method must specify the `application` or `server` value, but not both. It w
 - **metrics**: This is a Hash string keys and an array of strings for the values. The keys should reference the [names of metrics](https://docs.newrelic.com/docs/apm/apis/application-examples-v2/getting-apdex-data-apps-or-browsers-api-v2#apdex-names) while the values reference the values you want to get for that metric. You can use the `names` method to get a list of available metrics and their possible values.
 - **summary**: can be set to `true` to summarize the data instead of getting the full list.
 - **range**: a Hash with a `to` and `from` keys.
-  - **from**: a string representing the start time for the range of metric values to get. This uses the [Chronic](https://github.com/mojombo/chronic) to parse the time, so you can use values like `yesterday` or `one month ago`.
+  - **from**: a string or a Time representing the start time for the range of metric values to get. This uses the [Chronic](https://github.com/mojombo/chronic) to parse the time, so you can use values like `yesterday` or `one month ago`.
   - **to**: this is the second half of the range. It too uses Chronic to parse the date. If `from` is specified by `to` is not, it will assume `Time.now`.
 
