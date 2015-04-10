@@ -6,8 +6,8 @@ require 'chronic'
 module NewRelicMetrics
   class Configuration
     attr_accessor :api_key
-    def initialize(api_key:nil,&block)
-      @api_key=api_key
+    def initialize(options={},&block)
+      @api_key=options[:api_key]
       yield(self) if block
     end
   end
@@ -33,7 +33,9 @@ module NewRelicMetrics
       raise ArgumentError, "No API Key is configured" unless @config && @config.api_key
     end
 
-    def names(application:nil, server:nil)
+    def names(options)
+      application = options[:application]
+      server = options[:server]
       raise ArgumentError, "Need to define either an application or server id" unless application || server
       raise ArgumentError, "Need to define either an application or server id, but not both" if application && server
       resource = application ? 'applications' : 'servers'
@@ -41,7 +43,13 @@ module NewRelicMetrics
       get(resource, resource_id, "metrics")['metrics']
     end
 
-    def metrics(application:nil, server:nil, metrics:, range:{}, summarize: false)
+    def metrics(options)
+      application = options[:application]
+      server = options[:server]
+      metrics = options[:metrics] or raise ArgumentError "missing keyword: metrics"
+      range = options[:range] || {}
+      summarize = options[:summarize] || false
+
       if range && range!={}
         raise ArgumentError, "Range must only contain a :to and :from time" unless range.keys.all?{|k| k==:to || k==:from }
         raise ArgumentError, "Range must contain a :from time" unless range.keys.include?(:from)
