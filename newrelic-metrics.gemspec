@@ -10,6 +10,8 @@ Gem::Specification.new do |s|
   s.homepage      = 'https://factor.io'
   s.summary       = 'Easily get metrics out of New Relic for your application or servers'
   s.files         = Dir.glob('lib/*.rb')
+  s.license       = ['MIT']
+  s.required_ruby_version = '>= 1.9.2'
   
   s.require_paths = ['lib']
 
