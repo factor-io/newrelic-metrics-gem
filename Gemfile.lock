@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    newrelic-metrics (0.1.03)
+    newrelic-metrics (0.1.1)
       chronic (~> 0.10.2)
       json (~> 1.8.2)
       rest-client (~> 1.8.0)
