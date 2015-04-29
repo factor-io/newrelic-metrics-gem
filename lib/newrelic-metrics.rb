@@ -25,7 +25,7 @@ module NewRelicMetrics
   end
 
   class Client
-    BASE = 'https://api.newrelic.com/v2'
+    BASE = 'https://api.newrelic.com/'
 
     def initialize(config=nil)
       @config = config || NewRelicMetrics.configuration
@@ -113,7 +113,7 @@ module NewRelicMetrics
     end
 
     def gen_uri(resource,resource_id,path,query)
-      uri       = URI.parse('https://api.newrelic.com/')
+      uri       = URI.parse(BASE)
       uri.path  = "/v2/#{resource}/#{resource_id}/#{path}.json"
       uri.query = query if query && query != ""
       uri.to_s
