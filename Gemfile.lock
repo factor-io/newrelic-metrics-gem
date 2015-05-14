@@ -4,6 +4,7 @@ PATH
     newrelic-metrics (0.1.10)
       chronic (~> 0.10, >= 0.10.2)
       json (~> 1.8, >= 1.8.2)
+      link_header (~> 0.0.8)
       rest-client (~> 1.8, >= 1.8.0)
 
 GEM
@@ -14,12 +15,13 @@ GEM
       simplecov (>= 0.7.1, < 1.0.0)
     diff-lcs (1.2.5)
     docile (1.1.5)
-    domain_name (0.5.23)
+    domain_name (0.5.24)
       unf (>= 0.0.5, < 1.0.0)
     http-cookie (1.0.2)
       domain_name (~> 0.5)
     json (1.8.2)
-    mime-types (2.4.3)
+    link_header (0.0.8)
+    mime-types (2.5)
     multi_json (1.11.0)
     netrc (0.10.3)
     rake (10.4.2)
@@ -47,13 +49,14 @@ GEM
     simplecov-html (0.9.0)
     unf (0.1.4)
       unf_ext
-    unf_ext (0.0.6)
+    unf_ext (0.0.7.1)
 
 PLATFORMS
   ruby
 
 DEPENDENCIES
   codeclimate-test-reporter (~> 0.4.7)
+  link_header (~> 0.0.8)
   newrelic-metrics!
   rake (~> 10.4.2)
   rspec (~> 3.2.0)
