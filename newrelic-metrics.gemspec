@@ -13,7 +13,7 @@ Gem::Specification.new do |s|
   s.files         = Dir.glob('lib/*.rb')
   s.license       = 'MIT'
   s.required_ruby_version = '>= 1.9.2'
-  
+
   s.require_paths = ['lib']
 
   s.add_runtime_dependency 'rest-client', '~> 1.8', '>= 1.8.0'
@@ -24,5 +24,4 @@ Gem::Specification.new do |s|
   s.add_development_dependency 'codeclimate-test-reporter', '~> 0.4.7'
   s.add_development_dependency 'rspec', '~> 3.2.0'
   s.add_development_dependency 'rake', '~> 10.4.2'
-  s.add_development_dependency 'link_header', '~> 0.0.8'
 end
