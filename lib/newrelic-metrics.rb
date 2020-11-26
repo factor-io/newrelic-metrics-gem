@@ -2,6 +2,7 @@ require 'restclient'
 require 'json'
 require 'uri'
 require 'chronic'
+require 'link_header'
 
 module NewRelicMetrics
   class Configuration
@@ -33,21 +34,29 @@ module NewRelicMetrics
       raise ArgumentError.new("No API Key is configured") unless @config && @config.api_key
     end
 
-    def names(options={})
+    def names(options={}, &block)
       validate_resource_options(options)
       resource_id = options[:application] || options[:server]
       resource    = options[:application] ? 'applications' : 'servers'
+      query       = "name=#{options[:name]}" if options[:name]
       
-      get(resource, resource_id, "metrics")['metrics']
+      get(resource, resource_id:resource_id, path:"metrics", query:query, root_node:"metrics", &block)
     end
 
-    def metrics(options={})
+    def applications(options={}, &block)
+      resource = 'applications'
+      query    = "filter[name]=#{options[:name]}" if options[:name]
+
+      get(resource, query:query, root_node:"applications", &block)
+    end
+
+    def metrics(options={}, &block)
       validate_metric_options(options)
       resource_id = options[:application] || options[:server]
       resource    = options[:application] ? 'applications' : 'servers'
       query       = generate_metrics_query(options)
 
-      get(resource, resource_id, "metrics/data", query)['metric_data']
+      get(resource, resource_id:resource_id, path:"metrics/data", query:query, root_node:"metric_data", &block)
     end
 
     private
@@ -93,28 +102,38 @@ module NewRelicMetrics
       end
     end
 
-    def get(resource, resource_id, path, query=nil)
-      uri = gen_uri(resource,resource_id,path,query)
+    def get(resource,options={})
+      next_uri = gen_uri(resource,options)
 
       begin
-        response = RestClient.get(uri,'X-Api-Key'=>@config.api_key)
+        begin
+          response = RestClient.get(next_uri,'X-Api-Key'=>@config.api_key)
+          lh       = LinkHeader.parse(response.headers[:link]).to_a.find { |v| v.flatten.include?('next') }
+          content  = JSON.parse(response)
+          content  = content.fetch(options[:root_node]) if options[:root_node]
+          if block_given?
+            yield content
+          else
+            return content
+          end
+          next_uri = lh && lh.first
+        end while next_uri
       rescue => ex
         message = ex.response ? JSON.parse(ex.response).values.first['title'] : ex.message
         raise RequestFailed, message
       end
-
-      begin
-        content = JSON.parse(response)
-      rescue => ex
-        raise RequestFailed, ex.message
-      end
-
-      content
     end
 
-    def gen_uri(resource,resource_id,path,query)
+    def gen_uri(resource,options={})
+      resource_id = options[:resource_id]
+      path        = options[:path]
+      query       = options[:query]
+
       uri       = URI.parse(BASE)
-      uri.path  = "/v2/#{resource}/#{resource_id}/#{path}.json"
+      uri.path  = "/v2/#{resource}"
+      uri.path  += "/#{resource_id}" if resource_id
+      uri.path  += "/#{path}" if path
+      uri.path  += ".json"
       uri.query = query if query && query != ""
       uri.to_s
     end
